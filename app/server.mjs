@@ -132,9 +132,20 @@ function startRemoteControl() {
   rc.proc = proc;
   rc.running = true;
   let buf = '';
+  let consented = false;
   const onData = (b) => {
     buf += stripAnsi(b.toString());
     if (/must be logged in|not logged in|Run `claude auth login`/i.test(buf)) rc.needsLogin = true;
+    // First run asks "Enable Remote Control? (y/n)" and waits, with nobody at
+    // a terminal (found live, 10.11.2026: the machine sat on it after login).
+    // The participant already said yes by connecting Claude on the setup page,
+    // so the machine answers once; the CLI remembers it and never asks again.
+    if (!consented && /Enable Remote Control\?\s*\(y\/n\)/i.test(buf)) {
+      consented = true;
+      // Enter is \r on a terminal (raw or cooked, the pty maps it); a plain pipe needs \n.
+      try { proc.stdin.write(process.env.NO_PTY ? 'y\n' : 'y\r'); } catch {}
+      log('rc: answered "y" to Enable Remote Control');
+    }
     const lines = buf.split(/\r?\n|\r/);
     buf = lines.pop();
     for (const l of lines) { const t = l.trim(); if (t && !/^[⠁-⣿]/.test(t)) log(`rc: ${t.slice(0, 300)}`); }

@@ -102,3 +102,11 @@ test('logged out while running: supervisor stops restarting and waits for setup'
   const starts = fs.readFileSync(path.join(m.state, 'rc.log'), 'utf8').trim().split('\n').length;
   assert.equal(starts, 1);
 });
+
+test('first run asks "Enable Remote Control? (y/n)": the machine answers y once', async (t) => {
+  const m = await boot({ FAKE_RC_ASK: '1', FAKE_RC_SECONDS: '2' }, { loggedIn: true }); t.after(m.stop);
+  await new Promise((res) => setTimeout(res, 1500));
+  const rcLog = fs.readFileSync(path.join(m.state, 'rc.log'), 'utf8');
+  assert.match(rcLog, /consent:y/);
+  assert.doesNotMatch(rcLog, /refused/);
+});

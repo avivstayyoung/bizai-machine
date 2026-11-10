@@ -12,6 +12,11 @@ case "$1 $2" in
 esac
 if [ "$1" = "remote-control" ]; then
   echo "rc-start $*" >> "$FAKE_STATE/rc.log"
+  if [ -n "$FAKE_RC_ASK" ] && [ ! -f "$FAKE_STATE/consented" ]; then
+    printf "Enable Remote Control? (y/n) "
+    read ans
+    case "$ans" in y*) touch "$FAKE_STATE/consented"; echo "consent:$ans" >> "$FAKE_STATE/rc.log" ;; *) echo "refused" >> "$FAKE_STATE/rc.log"; exit 1 ;; esac
+  fi
   echo "Remote Control ready"
   sleep "${FAKE_RC_SECONDS:-1}"
   exit 1
