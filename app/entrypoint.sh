@@ -12,4 +12,8 @@ if [ ! -f /data/home/.bizai-owned ]; then
   chown -R node:node /data/home /data/work
   touch /data/home/.bizai-owned && chown node:node /data/home/.bizai-owned
 fi
-exec gosu node node /app/server.mjs
+# 🔴 HOME is passed explicitly: gosu resets it to the user's passwd home
+# (/home/node), which is NOT on the volume. Found live 10.11.2026: the Claude
+# login was written to /home/node/.claude and was gone after the first
+# redeploy, while the page still said the disk was mounted.
+exec gosu node env HOME=/data/home node /app/server.mjs

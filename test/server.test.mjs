@@ -110,3 +110,9 @@ test('first run asks "Enable Remote Control? (y/n)": the machine answers y once'
   assert.match(rcLog, /consent:y/);
   assert.doesNotMatch(rcLog, /refused/);
 });
+
+test('the entrypoint keeps HOME on the volume (gosu would reset it to /home/node)', () => {
+  const sh = fs.readFileSync(path.join(root, 'app', 'entrypoint.sh'), 'utf8');
+  const line = sh.split('\n').find((l) => l.startsWith('exec gosu'));
+  assert.match(line || '', /env HOME=\/data\/home /);
+});
