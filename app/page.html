@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>המחשב שלי בענן · BizAI</title>
+<style>
+  :root { --ink:#16181d; --muted:#5d6470; --line:#e3e6eb; --brand:#3b5bdb; --ok:#1f9d55; --warn:#c2410c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; color:var(--ink); background:#f6f7f9; }
+  main { max-width: 560px; margin: 0 auto; padding: 28px 18px 60px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 22px; font-size: 16px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
+  .step { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .big { font-size: 19px; font-weight: 600; margin: 0 0 12px; }
+  button, .btn { display:block; width:100%; font-size:18px; padding:15px; border-radius:12px; border:0; background:var(--brand); color:#fff; text-align:center; text-decoration:none; cursor:pointer; font-weight:600; }
+  button[disabled] { opacity: .5; cursor: default; }
+  textarea { width:100%; font-size:16px; padding:12px; border:1px solid var(--line); border-radius:10px; min-height:70px; direction:ltr; margin:10px 0 12px; }
+  .ok { color: var(--ok); }
+  .warn { color: var(--warn); }
+  .hidden { display:none; }
+  ol { padding-inline-start: 20px; line-height: 1.7; margin: 8px 0 0; }
+  details { margin-top: 18px; color: var(--muted); font-size: 13px; }
+  pre { direction:ltr; text-align:left; white-space:pre-wrap; word-break:break-all; font-size:12px; background:#f0f1f4; padding:10px; border-radius:8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>המחשב שלי בענן</h1>
+  <p class="sub" id="sub">רגע, בודקים את המצב…</p>
+
+  <div class="card hidden" id="noVolume">
+    <p class="big warn">למחשב אין דיסק קבוע.</p>
+    <p>בלי דיסק, כל מה שנבנה כאן יימחק בהפעלה מחדש. פנו למדריך לפני שממשיכים.</p>
+  </div>
+
+  <div class="card hidden" id="connect">
+    <div class="step">שלב 1 מתוך 2</div>
+    <p class="big">מחברים את Claude למחשב</p>
+    <button id="startBtn">התחברות ל-Claude</button>
+  </div>
+
+  <div class="card hidden" id="approve">
+    <div class="step">שלב 2 מתוך 2</div>
+    <p class="big">מאשרים ומדביקים קוד</p>
+    <ol>
+      <li>לוחצים על הכפתור. ייפתח מסך של Claude.</li>
+      <li>לוחצים שם "Authorize" (אישור).</li>
+      <li>מופיע קוד. לוחצים "Copy Code" וחוזרים לכאן.</li>
+    </ol>
+    <p></p>
+    <a class="btn" id="authLink" target="_blank" rel="noopener">פתיחת מסך האישור של Claude</a>
+    <textarea id="code" placeholder="הדביקו כאן את הקוד"></textarea>
+    <button id="codeBtn">סיום החיבור</button>
+    <p id="codeMsg"></p>
+  </div>
+
+  <div class="card hidden" id="done">
+    <p class="big ok">✓ המחשב מחובר ל-Claude</p>
+    <p>מכאן עובדים רק מהאפליקציה של Claude:</p>
+    <ol>
+      <li>פותחים את Claude בטלפון או במחשב.</li>
+      <li>נכנסים ל-<b>Code</b>.</li>
+      <li>בוחרים את המחשב <b id="mname"></b> ומתחילים לכתוב.</li>
+    </ol>
+    <p id="rcState"></p>
+  </div>
+
+  <div class="card hidden" id="closed">
+    <p class="big">חלון ההתחברות נסגר</p>
+    <p>מטעמי אבטחה אפשר לחבר את Claude רק בשעה הראשונה אחרי שהמחשב עולה.</p>
+    <p>כדי לפתוח אותו שוב: ב-Railway, לוחצים על המחשב, ואז Restart.</p>
+  </div>
+
+  <details id="diag" class="hidden"><summary>פרטים טכניים (למדריך)</summary><pre id="log"></pre></details>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let nonce = null;
+function show(id) { for (const s of ['connect','approve','done','closed']) $(s).classList.toggle('hidden', s !== id); }
+async function refresh() {
+  const s = await (await fetch('/api/state')).json();
+  $('noVolume').classList.toggle('hidden', s.volume);
+  $('mname').textContent = s.machine;
+  $('log').textContent = (s.log || []).join('\n');
+  $('diag').classList.toggle('hidden', !(s.log || []).length);
+  if (s.loggedIn) {
+    show('done');
+    $('sub').textContent = 'הכל מוכן.';
+    $('rcState').innerHTML = s.remoteControl ? '<span class="ok">המחשב זמין עכשיו באפליקציה.</span>' : '<span class="warn">המחשב מתחבר מחדש, זה לוקח עד דקה.</span>';
+  } else if (!nonce) {
+    if (s.windowOpen) { show('connect'); $('sub').textContent = 'עוד שני שלבים קצרים והמחשב מוכן.'; }
+    else { show('closed'); $('sub').textContent = ''; }
+  }
+}
+$('startBtn').onclick = async () => {
+  $('startBtn').disabled = true; $('startBtn').textContent = 'מכינים…';
+  const r = await fetch('/api/login/start', { method: 'POST' });
+  const j = await r.json();
+  $('startBtn').disabled = false; $('startBtn').textContent = 'התחברות ל-Claude';
+  if (!r.ok) { alert(j.error === 'already_connected' ? 'המחשב כבר מחובר.' : 'משהו לא עבד. נסו שוב בעוד דקה.'); return refresh(); }
+  nonce = j.nonce; $('authLink').href = j.url; show('approve');
+};
+$('codeBtn').onclick = async () => {
+  const code = $('code').value.trim();
+  if (!code) { $('codeMsg').textContent = 'צריך להדביק את הקוד קודם.'; return; }
+  $('codeBtn').disabled = true; $('codeMsg').textContent = 'מחברים, עד חצי דקה…';
+  const r = await fetch('/api/login/code', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code, nonce }) });
+  $('codeBtn').disabled = false;
+  if (r.ok) { nonce = null; $('codeMsg').textContent = ''; return refresh(); }
+  $('codeMsg').innerHTML = '<span class="warn">הקוד לא התקבל. לוחצים שוב על "פתיחת מסך האישור", מעתיקים קוד חדש ומדביקים.</span>';
+  const j2 = await (await fetch('/api/login/start', { method: 'POST' })).json().catch(() => ({}));
+  if (j2.url) { nonce = j2.nonce; $('authLink').href = j2.url; $('code').value = ''; }
+};
+refresh(); setInterval(() => { if (!nonce) refresh(); }, 5000);
+</script>
+</body>
+</html>
