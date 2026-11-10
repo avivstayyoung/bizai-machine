@@ -39,10 +39,18 @@ railway whoami
    `git config --global user.email "$(gh api user -q .id)+$(gh api user -q .login)@users.noreply.github.com"`.
 
 ### Railway
+Start this only AFTER GitHub is connected, never in the same message: the Railway code
+expires within minutes, and a participant still busy with GitHub comes back to a dead code.
 1. Run in the background: `railway login --browserless > /tmp/railway-login.log 2>&1`
-2. Read the file for the line with `https://railway.com/activate?user_code=...`.
-3. Send them that exact link on its own line: tap it, and tap the approve button. Nothing to type.
-4. Confirm with `railway whoami`.
+2. Read the file for the pairing code (looks like `ABCD-EFGH`, also in the `user_code=` of the link).
+3. Give it exactly like GitHub, because the pre-filled link does not survive a sign-in
+   redirect and the participant lands on an empty box (seen live 10.11.2026):
+   tap https://railway.com/activate , sign in if asked, type the code (give it alone in a
+   code block), tap Continue, then approve.
+4. Tell them in advance: Railway shows a yellow warning that the login started "from a
+   different network". That is expected, it is this cloud machine, and they should continue.
+5. Confirm with `railway whoami`. Expired or failed? Kill the old command, start a fresh
+   login and give the new code. Never resend an old code.
 
 ## Building an agent
 
