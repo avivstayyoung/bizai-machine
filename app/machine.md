@@ -64,13 +64,14 @@ Claude connectors. Usually no keys. (Designed 10.11.2026; the local side and the
 check are not yet tested live.)
 
 ### 1. The local side: they paste one message into Claude on their computer
-Tell them: open Claude Code on your computer in the folder you built, paste this message,
+Tell them: open Claude Code (or Codex, if that is what they built with) on your computer in the
+folder you built, paste this message,
 and do what it asks. Several folders: the same message once per folder. Give it in ONE
 code block, exactly as written:
 
 ```
 מעבירים את מה שבניתי למחשב בענן. תעלה את התיקייה הזאת לגיטהאב שלי כריפו פרטי, ותעשה הכל בעצמך:
-1. אם חסרים במחשב git או הכלי gh של גיטהאב, תתקין אותם (במק בהתקנה הרשמית, בחלונות דרך winget) ותגיד לי רק על מה ללחוץ.
+1. אם חסרים במחשב git או הכלי gh של גיטהאב, תתקין אותם בלי סיסמת מנהל ובלי sudo: בחלונות דרך winget, ובמק את gh כקובץ zip מדף ההורדות של gh לתיקייה בבית שלי. אם git חסר במק, תפעיל xcode-select --install ותגיד לי ללחוץ Install בחלון שנפתח. תגיד לי רק על מה ללחוץ.
 2. אם gh לא מחובר, תריץ gh auth login --web ותיתן לי את הקישור ואת הקוד, כל אחד בשורה משלו והקוד בתיבה להעתקה.
 3. לפני ההעלאה תכתוב קובץ .gitignore שמוציא סודות ודברים כבדים: .env, קבצי מפתחות, node_modules, .DS_Store, וכל קובץ מעל 50MB. אם מצאת מפתח, סיסמה או טוקן בתוך קובץ אחר, אל תעלה אותו ותגיד לי איזה קובץ.
 4. אם יש לי בתיקייה ~/.claude שבמחשב תיקייה בשם skills או קובץ CLAUDE.md, תעתיק רק אותם לתת-תיקייה בשם from-my-computer כאן. שום דבר אחר מ-~/.claude.
