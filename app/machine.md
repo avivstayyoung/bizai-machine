@@ -21,6 +21,50 @@ A small-business owner from the BizAI workshop. Not technical, often on a phone.
 - npm global installs go to `/data/home/.npm-global` (already on PATH), so they persist.
 - Railway injects `RAILWAY_PROJECT_ID`, `RAILWAY_ENVIRONMENT_ID`, `RAILWAY_SERVICE_NAME` (this machine's own service).
 
+## Their identity file (session 1, before anything else)
+
+<!-- DRAFT on branch prep-track (Gal, 14.11.2026), NOT merged: Aviv's #1085, the
+personal prep track's file enters in session 1. Merging changes what every
+student machine does on its next start, so it waits for Aviv's test and his yes. -->
+
+Before the WhatsApp prep, Orit asked each participant a few questions and built a file that
+says who they are and how to work with them. Bring it here once. Skip this section if
+`/data/work/identity.md` already exists.
+
+1. Ask one question: "מה מספר הטלפון שאיתו נרשמת לסדנה?"
+2. Ask for a code, keeping the login in a cookie file (replace PHONE with what they wrote):
+   ```
+   curl -s -c /data/home/.askbiz.jar -H 'content-type: application/json' -d '{"phone":"PHONE"}' 'https://leanbizai.com/api/askbiz?op=identify'
+   ```
+   `"status":"code_sent"`: tell them "שלחתי לך קוד בוואטסאפ מאורית (ואם לא הגיע תוך דקה, בסמס). מה הקוד?"
+   Keep `otp_id` from the answer. Anything else: go to step 5 with `not_found` (or `server_error` if there was no JSON).
+3. Check the code:
+   ```
+   curl -s -b /data/home/.askbiz.jar -c /data/home/.askbiz.jar -H 'content-type: application/json' -d '{"otp_id":OTP_ID,"code":"CODE"}' 'https://leanbizai.com/api/askbiz?op=verify'
+   ```
+   `"ok":true`: step 4. A wrong code: ask once more. Still wrong: step 5 with `code_failed`.
+4. Download it and write it, with node (the answer is JSON, `md` is the file):
+   ```
+   curl -s -b /data/home/.askbiz.jar 'https://leanbizai.com/api/askbiz?op=identity' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);require("fs").writeFileSync("/data/work/identity.md",j.md);console.log(j.generic?"generic "+j.why:"personal")})'
+   ```
+   Then step 6.
+5. Any failure: never stop the setup. Report why and take the general file instead (WHY is one of
+   `code_failed`, `not_found`, `server_error`, `no_phone`, `other`):
+   ```
+   curl -s -H 'content-type: application/json' -d '{"phone":"PHONE","why":"WHY"}' 'https://leanbizai.com/api/askbiz?op=identity_fail' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{require("fs").writeFileSync("/data/work/identity.md",JSON.parse(s).md)})'
+   ```
+   If even that fails (no network), write `/data/work/identity.md` yourself with one line:
+   "עוד לא סיפרתי לך על עצמי. בשיחה הראשונה שלנו, תשאל אותי מה העסק שלי, מה עשיתי עם AI, ואיך נוח לי לקבל הסבר."
+6. Make sure it is read in every conversation: add these two lines to the end of `/data/work/CLAUDE.md`
+   if they are not there yet, and delete `/data/home/.askbiz.jar`:
+   ```
+   קרא את identity.md בתחילת כל שיחה: זה מי שאני ואיך לעבוד איתי.
+   @identity.md
+   ```
+7. Tell them in one sentence: personal ("הקובץ שהכנו עם אורית נמצא אצלי, ומעכשיו אני יודע איך לעבוד איתך")
+   or general ("עוד לא הכרנו, אז אשאל אותך כמה שאלות בשיחה הראשונה שלנו").
+   The file never goes into a GitHub repo: it stays in `/data/work`, outside every agent's folder.
+
 ## First connection (do this when they ask "connect me", or before the first build)
 
 Check first, do only what is missing:
