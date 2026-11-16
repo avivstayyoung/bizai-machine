@@ -52,7 +52,51 @@ expires within minutes, and a participant still busy with GitHub comes back to a
 5. Confirm with `railway whoami`. Expired or failed? Kill the old command, start a fresh
    login and give the new code. Never resend an old code.
 
-### Right after both are connected
+### Right after both are connected: who they are (identity.md)
+Before anything else, bring in the file that tells you who this person is and how to work with
+them. Before the workshop they answered a few questions on WhatsApp with Orit, Aviv's AI
+assistant; the answers became their identity file. (Aviv, 16.11.2026.)
+
+Skip this step if `/data/work/.bizai/identity.md` already exists and is not the generic one.
+
+1. Ask: "מה מספר הטלפון שנרשמת איתו לסדנה?" (the one they paid with or gave the workshop).
+2. Ask for a login code for that phone, keeping the cookie in a file:
+   ```
+   curl -s -c /tmp/askbiz.jar -H 'content-type: application/json' \
+     -d '{"phone":"<the number>"}' 'https://leanbizai.com/api/askbiz?op=identify'
+   ```
+   - `ok:true` with an `otp_id`: tell them "שלחתי לך קוד בוואטסאפ, מהמספר של אורית. מה הקוד?"
+     No WhatsApp after a minute? `GET https://leanbizai.com/api/askbiz?op=otp_status&id=<otp_id>`
+     sends it by SMS instead; tell them to check their SMS.
+   - Anything else (not found, other cohort, too many tries): do not argue and do not try other
+     numbers. Go to step 5 (the general file) and move on.
+3. Send the code they give you:
+   ```
+   curl -s -b /tmp/askbiz.jar -c /tmp/askbiz.jar -H 'content-type: application/json' \
+     -d '{"otp_id":"<otp_id>","code":"<the code>"}' 'https://leanbizai.com/api/askbiz?op=verify'
+   ```
+   Wrong code: let them try again (a new code is step 2 again). Never ask for anything but the code.
+4. Download their file:
+   ```
+   curl -s -b /tmp/askbiz.jar 'https://leanbizai.com/api/askbiz?op=identity'
+   ```
+   The answer is JSON. Write its `md` field, exactly as it is, to `/data/work/.bizai/identity.md`.
+   `generic:true` means they did not finish the questions; that is fine.
+5. If any step failed: write the general file to the same path. Get it by telling the team, with
+   `POST https://leanbizai.com/api/askbiz?op=identity_fail` (content-type JSON) and
+   `{"phone":"<the number>","why":"<reason>"}` so the team sees it. `why` is one of:
+   `code_failed`, `not_found`, `server_error`, `no_phone` (they would not give one), `other`.
+   Its answer carries the same general `md`, so one call is enough.
+6. Make every future conversation read it: if `/data/work/CLAUDE.md` has no line
+   `@.bizai/identity.md`, add that line right under the first line (`@.bizai/machine.md`).
+7. Delete `/tmp/askbiz.jar`. Then tell them in one short line, in their language:
+   personal file → "מעולה, עכשיו אני יודע מי את/ה ואיך נוח לך לעבוד. מהשיחה הבאה זה כבר אצלי."
+   general file → "בשיחה החדשה הראשונה שלנו אשאל אותך כמה שאלות קצרות, כדי להכיר אותך."
+   From now on follow what the file says (how to address them, short or detailed answers,
+   step by step or not). If the file is the general one, ask its questions in the first new
+   conversation, one at a time, and save the answers into it.
+
+### Then: anything built on their own computer?
 Ask one question: "בנית כבר משהו על המחשב שלך שתרצה להעביר לכאן?"
 No → go to "Building an agent". Yes → "Bringing over what they built on their computer".
 
