@@ -21,7 +21,7 @@ A small-business owner from the BizAI workshop. Not technical, often on a phone.
 - npm global installs go to `/data/home/.npm-global` (already on PATH), so they persist.
 - Railway injects `RAILWAY_PROJECT_ID`, `RAILWAY_ENVIRONMENT_ID`, `RAILWAY_SERVICE_NAME` (this machine's own service).
 
-## First connection (do this when they ask "connect me", or before the first build)
+## First connection (do this in the very first conversation, whatever they wrote first, or when they ask "connect me")
 
 Check first, do only what is missing:
 ```
@@ -96,8 +96,74 @@ Skip this step if `/data/work/.bizai/identity.md` already exists and is not the 
    step by step or not). If the file is the general one, ask its questions in the first new
    conversation, one at a time, and save the answers into it.
 
-### Then: anything built on their own computer?
-Ask one question: "בנית כבר משהו על המחשב שלך שתרצה להעביר לכאן?"
+### Then, in the same conversation: the brain, and getting to know them (session 1)
+From the cohort of 18.11.2026 the workshop happens ONLY on this machine, from the first
+session; nothing is built on their own computer (Aviv, 17.11.2026). So right after
+identity.md, without waiting to be asked, do these in order. Tell them before each one, in one
+short line, what is about to happen. Check first and skip what is already done.
+
+**1. Install the brain (המוח).** It is the `mind` plugin for Claude Code. Done already if
+`claude plugin list` shows `mind`. Otherwise, run it all yourself:
+```
+rm -rf ~/.mind-plugin && mkdir -p ~/.mind-plugin
+curl -fsSL https://guides.leanbizai.com/files/mind.zip -o /tmp/mind.zip
+python3 -m zipfile -e /tmp/mind.zip ~/.mind-plugin && rm /tmp/mind.zip
+chmod +x ~/.mind-plugin/mind/plugin/bin/*
+claude plugin marketplace add ~/.mind-plugin/mind
+claude plugin install mind@mind
+~/.mind-plugin/mind/plugin/bin/mind allow
+```
+`~` is `/data/home`, on the persistent disk, so the brain and its notes (`~/Mind`) survive
+restarts and redeploys. Then `~/.mind-plugin/mind/plugin/bin/mind status` must show a vault;
+if not, `mind doctor` and fix what it says. Say in one line: "התקנתי לך את המוח. מעכשיו כל מה
+שנדבר עליו נשמר בו, ובכל שיחה חדשה אני כבר יודע אותו."
+The brain loads in a NEW conversation. Finish the steps below in this one (use the full path
+to `mind` above if the plain command is not found), and at the end send them to a new one.
+
+**2. Only if identity.md is the general one: the prep questions, before anything else.**
+They did not answer Orit's questions before the workshop. Ask the questions that are in the
+general identity.md now, one at a time, and save every answer into identity.md as you go. This
+tells you how to talk to them and how comfortable they are with technology, so do it before
+the business. Then follow what you learned.
+
+**3. The interview about the business (דף העסק).** One question at a time, in simple Hebrew,
+waiting for each answer. If they don't know or want to skip, move on. Before the first
+question, check what the brain already has and ask only what is missing. The topics, in order:
+1. שם העסק
+2. מה העסק עושה, במשפט אחד
+3. מי הלקוחות: הלקוח הטיפוסי, מאיפה הוא מגיע ומה חשוב לו
+4. מי עובד בעסק ומי אחראי על מה
+5. מה מוכרים ובכמה, מוצר או שירות בכל שורה
+6. שעות פעילות, אזור וזמני תגובה
+7. מדיניות: ביטולים, החזרים, משלוחים ותשלום
+8. שלוש השאלות שלקוחות שואלים הכי הרבה, ומה עונים להן
+9. הטון של העסק: חם ואישי, קצר ולעניין, מקצועי, הומוריסטי, עם או בלי אימוג'ים
+10. שתיים או שלוש הודעות אמיתיות שנשלחו ללקוחות והם אוהבים, להדבקה כמו שהן
+11. מה אף פעם לא אומרים ללקוח
+12. מה תמיד עובר אליהם באופן אישי
+13. איפה לקוחות פונים: וואטסאפ, אינסטגרם, פייסבוק, מייל, טלפון, אתר
+14. מערכות וכלים שהעסק עובד איתם, ואיפה נמצאים נתוני הלקוחות
+15. מה גוזל להם הכי הרבה זמן בשבוע
+At the end show what you will save on the business page, and save only after they approve
+(the brain's own commands: `mind me set business.md --section <Section> --text "…"`, as its
+setup skill describes). Found a contradiction? Ask. After saving, say in one line what went in.
+
+**4. A backup on their GitHub.** So nothing is lost and their agents can read it: create a
+private repo for the notes and turn on the brain's online copy, yourself:
+```
+gh repo create business-brain --private
+mind publish setup "https://github.com/$(gh api user -q .login)/business-brain"
+```
+Never a public repo. If `business-brain` exists and is not empty, use `business-brain-2`.
+Say in one line: "שמרתי גיבוי של המוח בגיטהאב שלך, בריפו פרטי."
+
+**5. Close.** Tell them: open a new conversation (in Code, the machine BizAI, "+ New") and ask
+"מה הבנת על העסק שלי?". If the answer is right, session 1 is done. From now on, anything new in
+the business they just tell you: "תזכור ש…".
+
+### Only for someone who already built something on their own computer
+Earlier cohorts worked locally. If they mention it, or are from an earlier cohort, ask:
+"בנית כבר משהו על המחשב שלך שתרצה להעביר לכאן?"
 No → go to "Building an agent". Yes → "Bringing over what they built on their computer".
 
 ## Bringing over what they built on their computer
