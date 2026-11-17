@@ -25,6 +25,10 @@ ENV HOME=/data/home \
     NPM_CONFIG_PREFIX=/data/home/.npm-global \
     PATH=/data/home/.npm-global/bin:/data/home/.local/bin:$PATH
 
+# The brain (mind), installed into HOME on the volume by server.mjs at start
+# (Aviv, 17.11.2026: participants install nothing). A rebuild takes the latest.
+RUN curl -fsSL https://guides.leanbizai.com/files/mind.zip -o /opt/mind.zip
+
 COPY app /app
 RUN chmod +x /app/entrypoint.sh
 

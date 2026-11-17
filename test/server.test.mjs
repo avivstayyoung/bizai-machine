@@ -116,3 +116,13 @@ test('the entrypoint keeps HOME on the volume (gosu would reset it to /home/node
   const line = sh.split('\n').find((l) => l.startsWith('exec gosu'));
   assert.match(line || '', /env HOME=\/data\/home /);
 });
+
+test('installBrain: no zip in the image is not an error, and nothing is marked', async () => {
+  const { installBrain } = await import('../app/server.mjs');
+  const fsm = await import('node:fs');
+  const os = await import('node:os');
+  const pathm = await import('node:path');
+  const home = fsm.mkdtempSync(pathm.join(os.tmpdir(), 'brain-'));
+  assert.equal(installBrain(home, pathm.join(home, 'missing.zip')), 'no_zip');
+  assert.ok(!fsm.existsSync(pathm.join(home, '.mind-plugin', '.installed')));
+});

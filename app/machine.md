@@ -102,8 +102,9 @@ session; nothing is built on their own computer (Aviv, 17.11.2026). So right aft
 identity.md, without waiting to be asked, do these in order. Tell them before each one, in one
 short line, what is about to happen. Check first and skip what is already done.
 
-**1. Install the brain (המוח).** It is the `mind` plugin for Claude Code. Done already if
-`claude plugin list` shows `mind`. Otherwise, run it all yourself:
+**1. The brain (המוח).** It is the `mind` plugin for Claude Code. The machine installs it by
+itself when it starts (`/data/home/.mind-plugin/.installed` exists), so usually just confirm
+with `claude plugin list` and tell them it is there. Only if it is missing, run it all yourself:
 ```
 rm -rf ~/.mind-plugin && mkdir -p ~/.mind-plugin
 curl -fsSL https://guides.leanbizai.com/files/mind.zip -o /tmp/mind.zip

@@ -81,6 +81,37 @@ export function seedClaudeConfig(home = HOME, work = WORK_DIR) {
   if (!fs.existsSync(userMd)) fs.writeFileSync(userMd, '@.bizai/machine.md\n\n# הערות שלי\n');
 }
 
+// ---------- the brain (mind), installed with the machine (Aviv, 17.11.2026) ----------
+// From the cohort of 18.11 the participant never installs anything: the image
+// carries mind.zip (Dockerfile, from guides.leanbizai.com/files/mind.zip), and
+// the machine installs it into HOME on the volume as soon as it can. Best
+// effort and logged: if it fails, machine.md has Claude install it in the first
+// conversation instead. A marker file stops it from running twice; a new brain
+// version reaches a machine only when its volume has no marker (a new machine).
+const BRAIN_ZIP = process.env.BRAIN_ZIP || '/opt/mind.zip';
+export function installBrain(home = HOME, zip = BRAIN_ZIP) {
+  const dir = path.join(home, '.mind-plugin');
+  const marker = path.join(dir, '.installed');
+  if (fs.existsSync(marker)) return 'already';
+  if (!fs.existsSync(zip)) { log('brain: no mind.zip in the image, Claude installs it in the first chat'); return 'no_zip'; }
+  const run = (cmd, args) => spawnSync(cmd, args, { encoding: 'utf8', timeout: 120000, env: { ...process.env, HOME: home } });
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.mkdirSync(dir, { recursive: true });
+  let r = run('python3', ['-m', 'zipfile', '-e', zip, dir]);
+  if (r.status !== 0) { log(`brain: unzip failed ${String(r.stderr).slice(0, 200)}`); return 'unzip_failed'; }
+  const bin = path.join(dir, 'mind', 'plugin', 'bin');
+  try { for (const f of fs.readdirSync(bin)) fs.chmodSync(path.join(bin, f), 0o755); } catch {}
+  r = run(CLAUDE, ['plugin', 'marketplace', 'add', path.join(dir, 'mind')]);
+  if (r.status !== 0 && !/already/i.test(`${r.stdout}${r.stderr}`)) { log(`brain: marketplace add failed ${String(r.stderr || r.stdout).slice(0, 200)}`); return 'marketplace_failed'; }
+  r = run(CLAUDE, ['plugin', 'install', 'mind@mind']);
+  if (r.status !== 0 && !/already/i.test(`${r.stdout}${r.stderr}`)) { log(`brain: install failed ${String(r.stderr || r.stdout).slice(0, 200)}`); return 'install_failed'; }
+  r = run(path.join(bin, 'mind'), ['allow']);
+  if (r.status !== 0) log(`brain: allow failed ${String(r.stderr || r.stdout).slice(0, 200)}`);
+  fs.writeFileSync(marker, new Date().toISOString());
+  log('brain: installed');
+  return 'installed';
+}
+
 // ---------- auth ----------
 export function authStatus() {
   const r = spawnSync(CLAUDE, ['auth', 'status', '--json'], { encoding: 'utf8', timeout: 20000, env: process.env });
@@ -226,6 +257,7 @@ export const server = http.createServer(async (req, res) => {
       return send(res, 400, { error: 'login_failed', detail: s.out.slice(-300) });
     }
     log('claude login ok');
+    installBrain();
     startRemoteControl();
     return send(res, 200, { ok: true });
   }
@@ -235,6 +267,7 @@ export const server = http.createServer(async (req, res) => {
 
 if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
   seedClaudeConfig();
+  installBrain();
   server.listen(PORT, '0.0.0.0', () => log(`BizAI machine "${MACHINE_NAME}" listening on ${PORT}`));
   if (authStatus().loggedIn) startRemoteControl();
   else log('waiting for Claude login on the setup page');
