@@ -110,6 +110,22 @@ so whoever cannot reach it simply continues with the general file. Say it kindly
    step by step or not). If the file is the general one, ask its questions in the first new
    conversation, one at a time, and save the answers into it.
 
+### 🔴 Before the session-1 steps: did they already build on their own computer? (Aviv, 18.11.2026)
+The cohorts that started before 18.11 built a worker and a brain on their own computer, and in
+session 4 they come here. The worst thing that can happen to them is to be asked about their
+business from the start, as if today were day one. So:
+- Their first message says they are from an earlier cohort, or built on their computer, or a
+  folder/worker/brain they already have → after GitHub, Railway and identity, install the brain
+  (step 1 below) and go straight to "Bringing over what they built on their computer". Skip the
+  prep questions and the business interview.
+- Otherwise, before the business interview, ask once: "בנית כבר משהו על המחשב שלך, במפגשים
+  קודמים?" Yes or not sure → the same: bring it over first.
+- This does not depend on identity: a code that did not arrive, or a general identity.md,
+  changes nothing here.
+- After bringing it over, the brain already has their business page. Read it
+  (`mind me show business.md`), tell them in three or four lines what you know, and ask only
+  about what is missing or wrong.
+
 ### Then, in the same conversation: the brain, and getting to know them (session 1)
 From the cohort of 18.11.2026 the workshop happens ONLY on this machine, from the first
 session; nothing is built on their own computer (Aviv, 17.11.2026). So right after
@@ -193,8 +209,8 @@ No → go to "Building an agent". Yes → "Bringing over what they built on thei
 ## Bringing over what they built on their computer
 
 Same machine and same flow for everyone; this is one optional step for those who started
-locally. Expected content: folders of files, maybe skills and personal instructions, and
-Claude connectors. Usually no keys. (Designed 10.11.2026; the local side and the connector
+locally. Expected content: folders of files, their brain (the mind vault), maybe skills and personal
+instructions, and Claude connectors. Usually no keys. (Designed 10.11.2026; the local side and the connector
 check are not yet tested live.)
 
 ### 1. The local side: they paste one message into Claude on their computer
@@ -210,6 +226,7 @@ code block, exactly as written:
 3. לפני ההעלאה תכתוב קובץ .gitignore שמוציא סודות ודברים כבדים: .env, קבצי מפתחות, node_modules, .DS_Store, וכל קובץ מעל 50MB. אם מצאת מפתח, סיסמה או טוקן בתוך קובץ אחר, אל תעלה אותו ותגיד לי איזה קובץ.
 4. אם יש לי בתיקייה ~/.claude שבמחשב תיקייה בשם skills או קובץ CLAUDE.md, תעתיק רק אותם לתת-תיקייה בשם from-my-computer כאן. שום דבר אחר מ-~/.claude.
 5. תכתוב את שמות כל הקונקטורים שאתה רואה אצלך עכשיו לקובץ from-my-computer/connectors.txt.
+5א. המוח: אם יש לי את התוסף mind, תריץ mind status ותמצא את תיקיית הכספת שלו (בדרך כלל Mind בתיקיית הבית). תעתיק את כל התוכן שלה, בלי התיקייה .obsidian, לתת-תיקייה from-my-computer/mind. אם אין, תכתוב לי שאין מוח במחשב.
 6. אם משהו מהתיקייה הזאת רץ אצלי לבד בתזמון קבוע, תגיד לי מה.
 7. תעלה עם gh repo create --private --source=. --push, ובסוף תכתוב לי את שם הריפו בתיבה להעתקה.
 ```
@@ -225,6 +242,12 @@ gh repo clone <repo> /data/work/<repo>
   A skill with the same name already there: do not overwrite, tell them. Skills load only
   from the next session; do not ask them to open a new conversation. Until then, when one is
   needed, read its SKILL.md yourself and follow it.
+- `from-my-computer/mind/` exists → this is their brain. Find the vault here (`mind status`,
+  usually `~/Mind`) and copy every file from `from-my-computer/mind/` into it, keeping the
+  folders. A file that already exists here with other content: keep both, the local one
+  renamed with `-מהמחשב` before the extension, and tell them which. Then `mind doctor`, and read
+  `mind me show business.md` back to them in three or four lines: this is how they see that
+  nothing was lost. Never run the business interview after this step; ask only what is missing.
 - `from-my-computer/CLAUDE.md` exists → tell them in two sentences what it says, ask, and
   only on yes append it to `/data/work/CLAUDE.md` under a heading `## מהמחשב שלי`.
 - Something there runs by itself (a bot, a schedule, step 6 of the local message) → it gets
