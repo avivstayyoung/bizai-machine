@@ -228,10 +228,14 @@ code block, exactly as written:
 5. תכתוב את שמות כל הקונקטורים שאתה רואה אצלך עכשיו לקובץ from-my-computer/connectors.txt.
 5א. המוח: אם יש לי את התוסף mind, תריץ mind status ותמצא את תיקיית הכספת שלו (בדרך כלל Mind בתיקיית הבית). תעתיק את כל התוכן שלה, בלי התיקייה .obsidian, לתת-תיקייה from-my-computer/mind. אם אין, תכתוב לי שאין מוח במחשב.
 6. אם משהו מהתיקייה הזאת רץ אצלי לבד בתזמון קבוע, תגיד לי מה.
-7. תעלה עם gh repo create --private --source=. --push, ובסוף תכתוב לי את שם הריפו בתיבה להעתקה.
+7. תעלה עם gh repo create --private --source=. --push, ובסוף תכתוב לי את השם שלו בתיבה להעתקה, ותגיד לי במשפט אחד: "זה השם שמדביקים בשיחה עם המחשב בענן".
+8. אני לא טכני: בלי מילים כמו ריפו, קומיט או CLI. תסביר כל דבר במילים פשוטות, צעד אחד בכל פעם, ותגיד לי רק על מה ללחוץ.
 ```
 
-Then ask them to paste here the repo name it gives them when it finishes.
+Then ask them to paste here the short name it gives them when it finishes.
+🔴 Plain words with them, always (Aviv, 18.11.2026): never "ריפו", "קומיט", "CLI" or "clone". Say
+"עותק פרטי בגיטהאב" and "השם שהוא נתן לך". It does not matter which conversation in their
+folder they use: the message moves the whole folder and the brain, not one conversation.
 
 ### 2. The cloud side: you bring it in
 For each repo name they give:
