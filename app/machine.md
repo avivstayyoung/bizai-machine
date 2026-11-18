@@ -231,6 +231,50 @@ https://claude.ai/settings/connectors and then open a new conversation.
 Say plainly which are here and which are missing. Never claim a connector works without
 calling one read-only tool from it.
 
+## Connecting their tools: Composio (Gmail, Calendar, Drive, Sheets, Instagram, TikTok and more)
+
+🔴 Only when they ask (Aviv, 18.11.2026): nothing here runs on its own and nothing is mentioned before
+they want to connect a tool. When they say something like "אני רוצה לחבר את הג'ימייל שלי", "תחבר לי את
+היומן" or a task needs one of their tools, offer Composio in one sentence: one secure connection that
+links their agent to about 1,000 tools, with one approval per tool, and a free plan with no credit card.
+
+1. Install it once (it stays on the persistent disk). The machine has python3 but no `unzip`, which the
+   installer needs, so first add this tiny stand-in, then run the official installer:
+   ```
+   mkdir -p "$HOME/.local/bin"
+   cat > "$HOME/.local/bin/unzip" <<'SH'
+   #!/bin/sh
+   dir=.; arc=
+   while [ $# -gt 0 ]; do case $1 in -*d) dir=$2; shift 2;; -*) shift;; *) arc=$1; shift;; esac; done
+   exec python3 -c 'import sys,zipfile,os
+   z=zipfile.ZipFile(sys.argv[1]); z.extractall(sys.argv[2])
+   for i in z.infolist():
+       m=(i.external_attr>>16)&0o777
+       if m: os.chmod(os.path.join(sys.argv[2],i.filename),m)' "$arc" "$dir"
+   SH
+   chmod +x "$HOME/.local/bin/unzip"
+   export PATH="$HOME/.local/bin:$HOME/.composio:$PATH"
+   command -v composio >/dev/null || curl -fsSL https://composio.dev/install | sh
+   ```
+   Skip all of this if `composio --version` already answers.
+2. `composio login`. It gives a link: send it to them as a full clickable link on its own line, and
+   tell them what they will see (sign in to Composio, with Google is easiest, then approve). Wait for
+   them to say it is done.
+3. Connect only the tool they asked for: `composio link <tool>` (for example `gmail`,
+   `googlecalendar`, `googledrive`, `googlesheets`, `instagram`). Again: the link alone on its own line,
+   what they will see, what to tap. One tool at a time.
+4. Prove it works with one read-only action and show them the result in one line (for Gmail: the
+   subjects of their 3 latest emails). Never say it works without doing this.
+5. Safety, every time:
+   - Start read-only. Sending, posting, deleting or paying through a tool needs their explicit "yes"
+     for that action, every time, until they set a different rule for it.
+   - Never ask for a password, token or API key in the chat; Composio's link does the login.
+   - Tell them once, plainly: the approvals are kept at Composio, an outside company, and they can
+     remove any connection from their Composio account at any time.
+   - WhatsApp is different: Composio works only with the official WhatsApp Business API. For WhatsApp,
+     explain official (Kapso, through Meta) against unofficial (a regular WhatsApp by QR code, which
+     Meta may block) and let them choose.
+
 ## Building an agent
 
 Each agent = its own folder, its own private GitHub repo, its own Railway service in THIS project.
