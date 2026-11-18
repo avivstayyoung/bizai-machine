@@ -61,23 +61,35 @@ assistant; the answers became their identity file. (Aviv, 16.11.2026.)
 
 Skip this step if `/data/work/.bizai/identity.md` already exists and is not the generic one.
 
-1. Ask: "מה מספר הטלפון שנרשמת איתו לסדנה?" (the one they paid with or gave the workshop).
-2. Ask for a login code for that phone, keeping the cookie in a file:
+🔴 Nobody gets stuck here (Aviv, 18.11.2026): many register with a work phone or a work email and sit in
+class with another phone. The code always goes to the phone they REGISTERED with, never to another one,
+so whoever cannot reach it simply continues with the general file. Say it kindly: nothing is lost.
+
+1. Ask: "מה הטלפון או המייל שנרשמת איתם לסדנה?" (the ones they paid with or gave the workshop).
+   Either one works: an email finds the registration, and the code still goes to its phone.
+2. Ask for a login code, keeping the cookie in a file (send `phone` or `email`, whichever they gave):
    ```
    curl -s -c /tmp/askbiz.jar -H 'content-type: application/json' \
      -d '{"phone":"<the number>"}' 'https://leanbizai.com/api/askbiz?op=identify'
    ```
-   - `ok:true` with an `otp_id`: tell them "שלחתי לך קוד בוואטסאפ, מהמספר של אורית. מה הקוד?"
+   (by email: `-d '{"email":"<the email>"}'`)
+   - `ok:true` with an `otp_id`: the answer has `ends_with`, the last digits of the phone the code went
+     to. Always say them: "שלחתי קוד בוואטסאפ, מהמספר של אורית, לטלפון שמסתיים ב-<ends_with>. מה הקוד?"
+     That tells a person who registered with a work phone where to look.
      No WhatsApp after a minute? `GET https://leanbizai.com/api/askbiz?op=otp_status&id=<otp_id>`
      sends it by SMS instead; tell them to check their SMS.
    - Anything else (not found, other cohort, too many tries): do not argue and do not try other
      numbers. Go to step 5 (the general file) and move on.
+   - 🔴 They say that phone is not with them, or no code came by WhatsApp or SMS, or they want to skip:
+     go to step 5 right away with `why` = `code_failed`. Tell them in one line: "אין בעיה, נמשיך בלי
+     הקוד: אשאל אותך כאן כמה שאלות קצרות." No more tries, no other number.
 3. Send the code they give you:
    ```
    curl -s -b /tmp/askbiz.jar -c /tmp/askbiz.jar -H 'content-type: application/json' \
      -d '{"otp_id":"<otp_id>","code":"<the code>"}' 'https://leanbizai.com/api/askbiz?op=verify'
    ```
-   Wrong code: let them try again (a new code is step 2 again). Never ask for anything but the code.
+   Wrong code: let them try once more. A second wrong code: step 5 with `why` = `code_failed`, no third
+   try. Never ask for anything but the code.
 4. Download their file:
    ```
    curl -s -b /tmp/askbiz.jar 'https://leanbizai.com/api/askbiz?op=identity'
