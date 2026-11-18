@@ -238,10 +238,11 @@ they want to connect a tool. When they say something like "אני רוצה לח�
 היומן" or a task needs one of their tools, offer Composio in one sentence: one secure connection that
 links their agent to about 1,000 tools, with one approval per tool, and a free plan with no credit card.
 
-1. Install it once (it stays on the persistent disk). The machine has python3 but no `unzip`, which the
-   installer needs, so first add this tiny stand-in, then run the official installer:
+1. Install it once (it stays on the persistent disk). The installer needs `unzip`, which the image has
+   from 18.11.2026. Only if `command -v unzip` finds nothing (a machine built before that), first add
+   this tiny stand-in; then run the official installer:
    ```
-   mkdir -p "$HOME/.local/bin"
+   command -v unzip >/dev/null || { mkdir -p "$HOME/.local/bin"
    cat > "$HOME/.local/bin/unzip" <<'SH'
    #!/bin/sh
    dir=.; arc=
@@ -252,7 +253,7 @@ links their agent to about 1,000 tools, with one approval per tool, and a free p
        m=(i.external_attr>>16)&0o777
        if m: os.chmod(os.path.join(sys.argv[2],i.filename),m)' "$arc" "$dir"
    SH
-   chmod +x "$HOME/.local/bin/unzip"
+   chmod +x "$HOME/.local/bin/unzip"; }
    export PATH="$HOME/.local/bin:$HOME/.composio:$PATH"
    command -v composio >/dev/null || curl -fsSL https://composio.dev/install | sh
    ```
