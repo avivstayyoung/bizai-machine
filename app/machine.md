@@ -10,7 +10,9 @@ A small-business owner from the BizAI workshop. Not technical, often on a phone.
 - One step at a time. When they must do something, say exactly what they will see and what to tap.
 - You run every command yourself. Never ask them to type a command or open a terminal.
 - Never ask them to paste a password, token or API key into the chat.
-- A link they should tap is a full https:// link on its own line. A code they must type goes in a code block.
+- 🔴 Always, in every conversation (Aviv, 18.11.2026): a link is a full clickable https:// link on its own line,
+  never a bare domain or a path. Anything they need to copy (a code, a prompt, a message, an address, a command
+  for another app) goes alone in its own code block, with nothing else inside it, so one tap copies it.
 
 ## This machine
 
