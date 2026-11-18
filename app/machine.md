@@ -131,9 +131,15 @@ claude plugin install mind@mind
 `~` is `/data/home`, on the persistent disk, so the brain and its notes (`~/Mind`) survive
 restarts and redeploys. Then `~/.mind-plugin/mind/plugin/bin/mind status` must show a vault;
 if not, `mind doctor` and fix what it says. Say in one line: "התקנתי לך את המוח. מעכשיו כל מה
-שנדבר עליו נשמר בו, ובכל שיחה חדשה אני כבר יודע אותו."
-The brain loads in a NEW conversation. Finish the steps below in this one (use the full path
-to `mind` above if the plain command is not found), and at the end send them to a new one.
+שנדבר עליו נשמר בו, ואני זוכר אותו גם בפעם הבאה."
+🔴 **Never send them to a new conversation** (Aviv, 18.11.2026: "זה אחר כך מבלבל אותם"). If the
+brain was installed only now, its hooks start with the next session, so load it yourself here:
+```
+echo '{"hook_event_name":"SessionStart","source":"startup"}' | mind hook session-start
+```
+and treat the `additionalContext` in its output as if it had been given to you at the start.
+Save with `mind` commands directly (the full path above if the plain command is not found).
+Finish all the steps below in this same conversation.
 
 **2. Only if identity.md is the general one: the prep questions, before anything else.**
 They did not answer Orit's questions before the workshop. Ask the questions that are in the
@@ -172,9 +178,12 @@ mind publish setup "https://github.com/$(gh api user -q .login)/business-brain"
 Never a public repo. If `business-brain` exists and is not empty, use `business-brain-2`.
 Say in one line: "שמרתי גיבוי של המוח בגיטהאב שלך, בריפו פרטי."
 
-**5. Close.** Tell them: open a new conversation (in Code, the machine BizAI, "+ New") and ask
-"מה הבנת על העסק שלי?". If the answer is right, session 1 is done. From now on, anything new in
-the business they just tell you: "תזכור ש…".
+**5. Close, in this conversation.** Do not send them anywhere. Read the business page back from
+the brain yourself (`mind me show business.md`), not from what you remember of the chat, and tell
+them in three or four short lines what you understood about the business. Ask: "זה מדויק? משהו
+לתקן?", and fix what they say. Then session 1 is done. From now on, anything new in the business
+they just tell you: "תזכור ש…". They keep working in this same conversation; when it gets long,
+it is compacted by itself and the brain is loaded back in.
 
 ### Only for someone who already built something on their own computer
 Earlier cohorts worked locally. If they mention it, or are from an earlier cohort, ask:
@@ -213,8 +222,9 @@ For each repo name they give:
 gh repo clone <repo> /data/work/<repo>
 ```
 - `from-my-computer/skills/` exists → copy each skill folder into `/data/home/.claude/skills/`.
-  A skill with the same name already there: do not overwrite, tell them. Skills load in a
-  NEW conversation; tell them to open one when you are done.
+  A skill with the same name already there: do not overwrite, tell them. Skills load only
+  from the next session; do not ask them to open a new conversation. Until then, when one is
+  needed, read its SKILL.md yourself and follow it.
 - `from-my-computer/CLAUDE.md` exists → tell them in two sentences what it says, ask, and
   only on yes append it to `/data/work/CLAUDE.md` under a heading `## מהמחשב שלי`.
 - Something there runs by itself (a bot, a schedule, step 6 of the local message) → it gets
@@ -227,7 +237,8 @@ gh repo clone <repo> /data/work/<repo>
 Connectors belong to their Claude account, not to a folder. Connectors added on claude.ai
 should show up here as tools named `mcp__claude_ai_...`. Compare with
 `from-my-computer/connectors.txt`: every one missing here, they add once at
-https://claude.ai/settings/connectors and then open a new conversation.
+https://claude.ai/settings/connectors. It shows up here from the next session: do not ask them
+to open a new conversation, check again the next time they come back.
 Say plainly which are here and which are missing. Never claim a connector works without
 calling one read-only tool from it.
 
@@ -304,6 +315,8 @@ The worker needs a public address (webhooks, WhatsApp)? `railway domain --servic
 
 ## Never
 
+- Never tell them to open a new conversation ("+ New", "שיחה חדשה"). They work in one
+  conversation; it is compacted by itself (Aviv, 18.11.2026).
 - Never delete or change the service named `$RAILWAY_SERVICE_NAME` (that is this machine), and never
   remove its volume.
 - Never run `claude auth logout` or `railway logout`.
