@@ -5,6 +5,12 @@ needs one of their systems. Nothing here runs on its own and nothing is offered 
 (Aviv, 19.11.2026: "שברגע שהם ישאלו... הוא ידע מה האפשרויות שלו", and "לעשות להם את החיים קלים".)
 Composio coverage was checked against composio.dev/toolkits on 19.11.2026.
 
+🔴 **These are options, not limits** (Aviv, 19.11.2026: "שלא נגביל אותם... זה יהיה הצעה, אבל אם הם
+המשיכו לשאול... ימשיך לחפש עוד אופציות. אולי יש דברים שאנחנו לא מכירים"). Offer what is here first.
+If it does not fit, or they ask for more, search the web for what exists today (tools, APIs and
+Composio toolkits are added every month; composio.dev/toolkits/<name> answers in one fetch) and bring
+them the new options too. Never present this list as everything there is.
+
 ## First: what already works stays as it is
 
 Many arrive with connections already made: connectors on their Claude account, tools already linked
@@ -63,6 +69,40 @@ key (sometimes a key and a secret, or an ID and a token) from the system's setti
 | Self-hosted WordPress and WooCommerce | WordPress REST API with an Application Password; WooCommerce REST API keys |
 
 Most of the site-builders here are WordPress on their own hosting, not WordPress.com: ask which.
+
+## AI models: images, video and voice (OpenAI, Gemini and others)
+
+Claude writes and builds; for images, video or a voice conversation the agent calls another model.
+- **In Composio, with their own API key:** `openai` (images, image editing, speech, Realtime voice
+  sessions), `gemini` (text, images, video), `replicate` (many open models), `runway` (video).
+  The key is from their account at that company (platform.openai.com, aistudio.google.com) and is
+  entered on Composio's screen, never in the chat. 🔴 Say first: these are paid per use, on their own
+  card at that company, separate from Claude; suggest a monthly spending limit in that account.
+- **Which model:** models change every few weeks. Before using one, check the company's official
+  docs for the current best model for the job (images, video, voice) and tell them its name in one line.
+- **A voice conversation** (a voice agent on a page, or answering the phone) is not a one-time action:
+  it is an agent that runs as its own Railway service ("Building an agent" in machine.md), using
+  OpenAI's Realtime API or Gemini's Live API, and Twilio (in Composio) for a phone number.
+  The keys go in that service's Railway variables.
+
+## Video and podcasts
+
+| What | Route |
+|---|---|
+| YouTube, Vimeo, Wistia, Dropbox, Canva, HeyGen, ElevenLabs | Composio: youtube, vimeo, wistia, dropbox, canva, heygen, elevenlabs |
+| Transcription (Hebrew included) | Composio: assemblyai, deepgram; or ElevenLabs |
+| Rendering video in the cloud from a template | Composio: shotstack, creatomate (paid per render) |
+| Publishing a podcast episode | The hosting service's API: Transistor (developers.transistor.fm) or Buzzsprout. The episode reaches Spotify and Apple from there, through the RSS feed |
+| Spotify | Composio `spotify` reads shows, episodes and playlists. Spotify has no API to upload an episode: it comes from the podcast host, or they upload in Spotify for Creators themselves |
+| Riverside | API only on Riverside's Business plan (through their sales). Otherwise they export the file to Drive or Dropbox and you work from there |
+| Descript, CapCut, Opus Clip | Not in Composio. They stay tools they use by hand; you prepare the script, the cut list, the titles and the captions |
+
+**Editing on this machine:** cutting silences, short clips for reels and stories, Hebrew captions
+burned in, audio cleanup and thumbnails, with ffmpeg. It is not in the image; install it once on the
+persistent disk without root (no `ffmpeg` on the PATH and none in `~/.local/bin`? Then
+`npm install -g ffmpeg-static && mkdir -p ~/.local/bin && ln -sf "$(npm root -g)/ffmpeg-static/ffmpeg" ~/.local/bin/ffmpeg`,
+and check `ffmpeg -version`). Short videos only: long or many videos load this machine and
+raise their Railway bill, so for those offer the cloud rendering above.
 
 ## WhatsApp: all the options, so they choose
 
