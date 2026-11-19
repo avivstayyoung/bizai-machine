@@ -82,7 +82,19 @@ Claude writes and builds; for images, video or a voice conversation the agent ca
   docs for the current best model for the job (images, video, voice) and tell them its name in one line.
 - **A voice conversation** (a voice agent on a page, or answering the phone) is not a one-time action:
   it is an agent that runs as its own Railway service ("Building an agent" in machine.md), using
-  OpenAI's Realtime API or Gemini's Live API, and Twilio (in Composio) for a phone number.
+  OpenAI's Realtime API or Gemini's Live API, and Twilio (in Composio) for a phone number, or a
+  Zadarma number (below) connected over SIP.
+
+## A separate phone number (Israel)
+
+For an agent's own WhatsApp, a phone line for a voice agent, or SMS codes: offer **Zadarma**
+(zadarma.com) first. It is what BizAI itself uses: Aviv's numbers, including the WhatsApp number of
+BizAI's own agent, are from Zadarma (Aviv, 19.11.2026), at a few dollars a month (he pays about $3
+a month); check the current price on their site before you say a number. Israeli virtual numbers,
+SMS to the number, and forwarding to a phone or to SIP. Not in Composio: it has an official API
+(zadarma.com/en/support/api, a key and a secret from the account settings, into Railway variables)
+for ordering numbers, reading incoming SMS and routing calls. Buying a number is money: their account,
+their card, their "yes". Twilio (in Composio) is the other route.
   The keys go in that service's Railway variables.
 
 ## Video and podcasts
@@ -107,7 +119,8 @@ raise their Railway bill, so for those offer the cloud rendering above.
 ## WhatsApp: all the options, so they choose
 
 Say first, in one line: for an agent that writes to customers, it is best to give it its own number,
-so a mistake or a block never touches the business's main WhatsApp.
+so a mistake or a block never touches the business's main WhatsApp. Where the number comes from:
+see "A separate phone number (Israel)" below.
 
 **Official (safe, Meta's rules):**
 - **Kapso** (in Composio, `kapso`): the simplest official route, recommended first.
