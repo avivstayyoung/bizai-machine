@@ -43,6 +43,7 @@ test('fresh machine: page, open window, first-run dialogs pre-answered, guide in
   assert.equal(set.skipDangerousModePermissionPrompt, true);
   assert.match(fs.readFileSync(path.join(m.env.WORK_DIR, 'CLAUDE.md'), 'utf8'), /@\.bizai\/machine\.md/);
   assert.ok(fs.existsSync(path.join(m.env.WORK_DIR, '.bizai', 'machine.md')));
+  assert.ok(fs.existsSync(path.join(m.env.WORK_DIR, '.bizai', 'connections.md')));
 });
 
 test('participant CLAUDE.md is never overwritten on restart', async (t) => {

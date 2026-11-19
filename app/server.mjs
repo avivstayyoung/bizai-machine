@@ -77,6 +77,10 @@ export function seedClaudeConfig(home = HOME, work = WORK_DIR) {
   const guideDir = path.join(work, '.bizai');
   fs.mkdirSync(guideDir, { recursive: true });
   fs.copyFileSync(new URL('./machine.md', import.meta.url), path.join(guideDir, 'machine.md'));
+  // The connections catalog (Aviv, 19.11.2026), read only when they ask to connect a tool.
+  // Best effort: a missing catalog must never stop the machine from starting.
+  try { fs.copyFileSync(new URL('./connections.md', import.meta.url), path.join(guideDir, 'connections.md')); }
+  catch (e) { log(`connections.md not copied: ${e.message}`); }
   const userMd = path.join(work, 'CLAUDE.md');
   if (!fs.existsSync(userMd)) fs.writeFileSync(userMd, '@.bizai/machine.md\n\n# הערות שלי\n');
 }
